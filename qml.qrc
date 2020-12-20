@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>FuncCombobox.qml</file>
+        <file>Divider.qml</file>
+        <file>MultiplierInput.qml</file>
+        <file>Utils.qml</file>
+        <file>qmldir</file>
+        <file>LabeledInput.qml</file>
+    </qresource>
+</RCC>
