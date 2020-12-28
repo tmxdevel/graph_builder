@@ -9,8 +9,12 @@ Window {
     width: 1280
     height: 720
     visible: true
-    title: qsTr("Графопостроитель 2000 ультра")
+    title: qsTr("Графопостроитель 2000 ультраааааааааааааааААААААААААААААА!!!!!!!!!!!!!!!!!!")
     color: "#313332"
+
+    GraphDataModel {
+        id: chartData
+    }
 
     Column {
         id: inputs
@@ -30,9 +34,49 @@ Window {
 
     }
 
-    Chart {
+    Rectangle {
+        id: tableWrap
         anchors.top: inputs.bottom
         anchors.left: parent.left
+        anchors.bottom: boundsInput.top
+        width: 150
+        clip: true
+        color: "white"
+        ListView {
+            id: table
+            anchors.fill: parent
+            model: chart.model
+            clip: true
+
+            ScrollBar.vertical: ScrollBar {}
+
+            delegate: Rectangle {
+                color: "white"
+                border.width: 1
+                border.color: "black"
+                width: parent.width
+                height: 50
+                Text {
+                    width:60
+                    leftPadding: 10
+                    id: valX
+                    text: valueX.toFixed(2)
+                }
+
+                Text {
+                    id: valY
+                    anchors.left: valX.right
+                    text: valueY.toFixed(2)
+                }
+            }
+
+        }
+    }
+
+    Chart {
+        id: chart
+        anchors.top: inputs.bottom
+        anchors.left: tableWrap.right
         anchors.right: parent.right
         anchors.bottom: boundsInput.top
         clip: true
@@ -46,6 +90,10 @@ Window {
 
         funcIndex: func.currentFunction
     }
+
+
+
+
 
     Row {
         id: boundsInput
@@ -81,6 +129,16 @@ Window {
             text:"]"
             color: "#DADAD9"
             font.pixelSize: 26
+        }
+        Button {
+            text: "Render"
+            onClicked: {
+                chart.updateGrid()
+                chart.update()
+
+                table.model = []
+                table.model = chart.model
+            }
         }
     }
 

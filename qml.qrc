@@ -7,5 +7,6 @@
         <file>Utils.qml</file>
         <file>qmldir</file>
         <file>LabeledInput.qml</file>
+        <file>ChartView.qml</file>
     </qresource>
 </RCC>

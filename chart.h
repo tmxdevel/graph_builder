@@ -15,6 +15,7 @@ struct Label {
 class Chart : public QQuickPaintedItem
 {
     Q_OBJECT
+
     Q_PROPERTY(double from READ from WRITE setFrom NOTIFY fromChanged)
     Q_PROPERTY(double to READ to WRITE setTo NOTIFY toChanged)
     Q_PROPERTY(double unit READ unit WRITE setUnit NOTIFY unitChanged)
@@ -24,23 +25,24 @@ class Chart : public QQuickPaintedItem
     Q_PROPERTY(double cMul READ cMul WRITE setCMul NOTIFY mulChanged)
 
     Q_PROPERTY(int funcIndex WRITE setFuncIndex)
-public:
+    Q_PROPERTY(GraphDataModel* model READ model)
 
 public:
+
+
     explicit Chart(QQuickItem *parent = nullptr);
-    virtual ~Chart()override;
+    virtual ~Chart() override;
 
     void paint(QPainter *painter) override;
 
     double from() const;
     double to() const;
     double unit() const;
-
     double aMul() const;
-
     double bMul() const;
-
     double cMul() const;
+
+    GraphDataModel* model();
 
 public slots:
     void setFrom(double from);
@@ -54,6 +56,7 @@ public slots:
     void setCMul(double cMul);
 
     void setFuncIndex(int funcIndex);
+    void updateGrid();
 
 signals:
     void fromChanged(double from);
@@ -62,8 +65,6 @@ signals:
 
     void mulChanged(double aMul);
 
-private slots:
-    void updateGrid();
 
 private:
     QVector<QPointF> m_chartData;
@@ -73,8 +74,8 @@ private:
     QList<int> m_gridVao;
     QList<int> m_gridVao2;
 
-    double m_max = 15;
-    double m_min = -15;
+    double m_max = 25;
+    double m_min = -25;
 
     double m_from = -1;
     double m_to = 10;
@@ -86,14 +87,13 @@ private:
     double m_bMul;
     double m_cMul;
 
-    GraphDataModel* m_model;
+    GraphDataModel m_model;
 
     int m_funcIndex;
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry) override;
 };
-
 
 
 

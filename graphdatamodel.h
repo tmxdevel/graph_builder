@@ -14,33 +14,30 @@ public:
 
 class GraphDataModel : public QAbstractListModel
 {
+    Q_OBJECT
 public:
     enum GraphRoles {
-        Value
+        ValueX,
+        ValueY
     };
 
     explicit GraphDataModel(QObject *parent = nullptr);
-    virtual ~GraphDataModel() override;
+    virtual ~GraphDataModel();
 
     QHash<int, QByteArray> roleNames()const override;
     int rowCount(const QModelIndex &parent = QModelIndex())const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole)const override;
 
-    void registerFunction(const QByteArray &name, MathFunctionX *funcObj);
+    void clear();
+    void addList(const QList<QPointF> &list);
+
+    Q_INVOKABLE void stub();
 
 public slots:
     void updateData();
-    void setBounds(double x, double y);
-    void setFunction(const QString &name);
 
 private:
-    QHash<QByteArray, MathFunctionX*> m_funcObjects;
-    QList<double> m_values;
-
-    double m_fromX = -100;
-    double m_toX = 100;
-    double m_unit = 10;
-    QString m_funcName;
+    QList<QPointF> m_values;
 };
 
 class Linear : public MathFunctionX

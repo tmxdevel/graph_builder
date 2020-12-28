@@ -8,7 +8,6 @@
 
 Chart::Chart(QQuickItem *parent) : QQuickPaintedItem(parent)
 {
-
     connect(this, &QQuickItem::widthChanged, this, &Chart::updateGrid);
     updateGrid();
     update();
@@ -27,16 +26,16 @@ void Chart::paint(QPainter *painter)
     int gridVaoOffset = 0;
     pen.setColor(QColor(60,62,61));
     pen.setWidth(1);
-    for(auto cnt : m_gridVao2) {
-        painter->setPen(pen);
+    painter->setPen(pen);
+    for(int cnt : m_gridVao2) {
         painter->drawPolyline(m_chartGrid2.constData() + gridVaoOffset, cnt);
         gridVaoOffset+=cnt;
     }
 
     gridVaoOffset = 0;
     pen.setColor(Qt::white);
+    painter->setPen(pen);
     for(auto cnt : m_gridVao) {
-        painter->setPen(pen);
         painter->drawPolyline(m_chartGrid.constData() + gridVaoOffset, cnt);
         gridVaoOffset+=cnt;
     }
@@ -82,7 +81,6 @@ void Chart::setFrom(double from)
 
     m_from = from;
     emit fromChanged(m_from);
-    updateGrid();
     update();
 }
 
@@ -94,7 +92,6 @@ void Chart::setTo(double to)
 
     m_to = to;
     emit toChanged(m_to);
-    updateGrid();
     update();
 }
 
@@ -106,7 +103,6 @@ void Chart::setUnit(double unit)
 
     m_unit = unit;
     emit unitChanged(m_unit);
-    updateGrid();
     update();
 }
 
@@ -118,7 +114,6 @@ void Chart::setAMul(double aMul)
 
     m_aMul = aMul;
     emit mulChanged(m_aMul);
-    updateGrid();
     update();
 }
 
@@ -130,7 +125,6 @@ void Chart::setBMul(double bMul)
 
     m_bMul = bMul;
     emit mulChanged(m_bMul);
-    updateGrid();
     update();
 }
 
@@ -142,7 +136,6 @@ void Chart::setCMul(double cMul)
 
     m_cMul = cMul;
     emit mulChanged(m_cMul);
-    updateGrid();
     update();
 }
 
@@ -150,15 +143,7 @@ void Chart::setFuncIndex(int funcIndex)
 {
     m_funcIndex = funcIndex;
     qDebug() << "Func index: " << funcIndex;
-    updateGrid();
     update();
-}
-
-double f(double x) {
-    return x;
-}
-double f2(double x) {
-    return x*x;
 }
 
 void Chart::updateGrid()
@@ -187,7 +172,7 @@ void Chart::updateGrid()
     default:
         func = new Linear();
     }
-    for(double i = m_from; i <= m_to; i+=m_unit) {
+    for(double i = m_from; i <= m_to; i+=m_unit/10) {
         double val = func->f(i,m_aMul,m_bMul,m_cMul);
         if(val > m_max) m_max = val;
         if(val < m_min) m_min = val;
@@ -278,11 +263,18 @@ void Chart::updateGrid()
     m_chartGrid.append(QPointF(ordinateX+10,30));
     m_gridVao.append(5);
 
+
+
     m_chartData.clear();
+    m_model.clear();
     double deltaX = (m_to - m_from) / width();
-    for(int i = 0; i < width(); i+=3) {
-        m_chartData.append(QPointF(i,-func->f(m_from+deltaX*i,m_aMul,m_bMul,m_cMul)*yScale + height()/2 + (m_max+m_min)/2*yScale));
+    QList<QPointF> dt;
+    for(int i = 0; i < width(); i+=10) {
+        QPointF pnt (i,-func->f(m_from+deltaX*i,m_aMul,m_bMul,m_cMul)*yScale + height()/2 + (m_max+m_min)/2*yScale);
+        dt.append(QPointF(m_from+deltaX*i,func->f(m_from+deltaX*i,m_aMul,m_bMul,m_cMul)));
+        m_chartData.append(pnt);
     }
+    m_model.addList(dt);
     delete func;
 }
 
@@ -294,4 +286,9 @@ double Chart::bMul() const
 double Chart::cMul() const
 {
     return m_cMul;
+}
+
+GraphDataModel *Chart::model()
+{
+    return &m_model;
 }

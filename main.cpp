@@ -9,20 +9,18 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-
     GraphDataModel model;
-
-    model.registerFunction("linear",new Linear);
-    model.registerFunction("sinusoid",new Sinusoid);
-    model.registerFunction("logarithm",new Logarithm);
-    model.registerFunction("exponential",new Exponential);
 
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty( "graphData", &model);
+    qmlRegisterType<GraphDataModel>();
+    engine.rootContext()->setContextProperty("graphData", &model);
+
     qmlRegisterType<Chart>("Sachi.Chart", 1, 0, "Chart");
+    qmlRegisterType<GraphDataModel>("Sachi.Chart", 1, 0, "GraphDataModel");
+
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
