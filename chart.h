@@ -25,7 +25,7 @@ class Chart : public QQuickPaintedItem
     Q_PROPERTY(double cMul READ cMul WRITE setCMul NOTIFY mulChanged)
 
     Q_PROPERTY(int funcIndex WRITE setFuncIndex)
-    Q_PROPERTY(GraphDataModel* model READ model)
+    Q_PROPERTY(GraphDataModel* model READ model NOTIFY modelChanged)
 
 public:
 
@@ -65,6 +65,8 @@ signals:
 
     void mulChanged(double aMul);
 
+
+    void modelChanged(GraphDataModel* model);
 
 private:
     QVector<QPointF> m_chartData;
